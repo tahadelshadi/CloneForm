@@ -5,26 +5,26 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Answer, Form, Question, Response , Choice
 from .forms import CreateBaseForm, AnswerForm, QuestionForm, ChoiceFormset
 
-def formtest(request):
-    if request.method == 'GET':
-        questionForm = QuestionForm(request.GET or None)
-        formset = ChoiceFormset(queryset=Choice.objects.none())
-    if request.method == 'POST':
-        questionForm = QuestionForm(request.POST or None)
-        formset = ChoiceFormset(request.POST or None)
-        if formset.is_valid() and questionForm.is_valid():
-            question = questionForm.save()
-            for form in formset:
-                choice = form.save(commit=False)
-                choice.question = question
-                choice.save()
-            return redirect('home')
-    context= {
-        'formset': formset,
-        'questionForm':questionForm,
+# def formtest(request):
+#     if request.method == 'GET':
+#         questionForm = QuestionForm(request.GET or None)
+#         formset = ChoiceFormset(queryset=Choice.objects.none())
+#     if request.method == 'POST':
+#         questionForm = QuestionForm(request.POST or None)
+#         formset = ChoiceFormset(request.POST or None)
+#         if formset.is_valid() and questionForm.is_valid():
+#             question = questionForm.save()
+#             for form in formset:
+#                 choice = form.save(commit=False)
+#                 choice.question = question
+#                 choice.save()
+#             return redirect('home')
+#     context= {
+#         'formset': formset,
+#         'questionForm':questionForm,
 
-    }
-    return render(request, 'form/formtest.html',context)
+#     }
+#     return render(request, 'form/formtest.html',context)
 
 def home(request):
 
@@ -52,15 +52,10 @@ def CreateForm(request, pk):
     questions = form.questions.all()
     
     questionsform = QuestionForm(request.POST or None)
-    formset = ChoiceFormset(request.POST or None)
     if request.method == "POST":
-        if formset.is_valid() and questionsform.is_valid():
+        if questionsform.is_valid():
             question = questionsform.save()
             form.questions.add(question)
-            for form in formset:
-                choice = form.save(commit=False)
-                choice.question = question
-                choice.save()
             return redirect("google:detail-question", pk = question.id)
         else:
             messages.error(request, "nashod")
@@ -75,8 +70,7 @@ def CreateForm(request, pk):
         'questionsform': questionsform,
         'questions': questions,
         'form':form,
-        'formset':formset,
-    }
+        }
     return render(request, 'form/form.html', context)
 
 def DeleteForm(request, pk):
