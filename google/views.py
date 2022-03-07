@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Answer, Form, Question, Response , Choice
 from .forms import CreateBaseForm, AnswerForm, QuestionForm, ChoiceFormset
+from django.contrib.auth.decorators import login_required
 
 # def formtest(request):
 #     if request.method == 'GET':
@@ -26,9 +27,10 @@ from .forms import CreateBaseForm, AnswerForm, QuestionForm, ChoiceFormset
 #     }
 #     return render(request, 'form/formtest.html',context)
 
+@login_required
 def home(request):
-
     form = CreateBaseForm(request.POST or None)
+    forms = Form.objects.all().order_by('-createdAt')
     if request.method == "POST":
         if form.is_valid():
             new_form = form.save(commit=False)
@@ -44,9 +46,11 @@ def home(request):
 
     context={
         'form':form,
+        'forms':forms,
     }
     return render(request,'form/home.html',context)
 
+@login_required
 def CreateForm(request, pk):
     form = Form.objects.get(id=pk)
     questions = form.questions.all()
@@ -73,6 +77,7 @@ def CreateForm(request, pk):
         }
     return render(request, 'form/form.html', context)
 
+@login_required
 def DeleteForm(request, pk):
     form = get_object_or_404(Form, id=pk)
     #delete choice and questions####################################
@@ -86,6 +91,7 @@ def DeleteForm(request, pk):
         ]
     )
 
+@login_required
 def CreateQuestionForm(request):
     form = QuestionForm()
     context = {
@@ -94,6 +100,7 @@ def CreateQuestionForm(request):
     return render(request, "form/questionform.html", context)
 
 
+@login_required
 def UpdateQuestion(request, pk):
     question = Question.objects.get(id=pk)
     choices = question.choices.all()
@@ -113,6 +120,7 @@ def UpdateQuestion(request, pk):
     return render(request, "form/questionform.html", context)
 
 
+@login_required
 def DeleteQuestion(request, pk):
     question = get_object_or_404(Question, id=pk)
 
@@ -126,6 +134,7 @@ def DeleteQuestion(request, pk):
         ]
     )
 
+@login_required
 def DetailQuestion(request,pk):
     question = get_object_or_404(Question, id=pk)
 
@@ -134,6 +143,7 @@ def DetailQuestion(request,pk):
     }
     return render(request, "form/questiondetail.html", context)
 
+@login_required
 def ChoiceForm(request,pk):
     question = Question.objects.get(id=pk)
     choices = question.choices.all()
@@ -160,6 +170,7 @@ def ChoiceForm(request,pk):
     return render(request, 'form/test.html', context)
 
 
+@login_required
 def CreateChoiceForm(request):
     form = QuestionForm()
     context={
@@ -167,6 +178,7 @@ def CreateChoiceForm(request):
     }
     return render(request, "form/choiceform.html", context)
 
+@login_required
 def DetailChoice(request, pk):
     choice = get_object_or_404(Choice, id=pk)
     context = {
@@ -174,6 +186,7 @@ def DetailChoice(request, pk):
     }
     return render(request, "form/choicedetail.html", context)
 
+@login_required
 def UpdateChoice(request, pk):
     choice = Choice.objects.get(id=pk)
 
@@ -191,6 +204,7 @@ def UpdateChoice(request, pk):
     return render(request, "form/questionform.html", context)
 
 
+@login_required
 def DeleteChoice(request, pk):
     choice = get_object_or_404(Choice, id=pk)
 
@@ -204,6 +218,7 @@ def DeleteChoice(request, pk):
         ]
     )
 
+@login_required
 def CreateResponse(request,pk):
     my_form = Form.objects.get(id=pk) 
     questions = my_form.questions.all()
@@ -233,7 +248,9 @@ def CreateResponse(request,pk):
         'answerform':answerform,
     }
     return render(request,'form/response.html',context)
+
 # pk = responder id 
+@login_required
 def ResponseFormDetail(request,pk):
     my_form = Form.objects.get(id=pk) 
     questions = my_form.questions.all()
