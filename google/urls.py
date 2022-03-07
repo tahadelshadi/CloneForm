@@ -22,5 +22,5 @@ urlpatterns = [
     
     
 
-    path('test/', views.formtest, name="form-test"),
+    # path('test/', views.formtest, name="form-test"),
 ]
