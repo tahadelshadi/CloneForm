@@ -1,0 +1,34 @@
+{% extends 'form/partials/base.html' %} {% block content %}
+
+{% load tailwind_filters %}
+
+<div class="md:flex md:items-center md:justify-between">
+    <div class="flex-1 min-w-0">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+            {{my_form.title}}
+        </h2>
+    </div>
+</div>
+<div class="mt-4 flex md:mt-0 md:ml-4">
+    
+</div>
+
+<div id="questionsforms" class="py-5 mt-5"></div>
+<div class="mt-5 py-5 border-t border-gray-100">
+    {% for question in questions %}
+        <div hx-target="this" class="mt-3 py-3 px-3 bg-white shadow border border-gray-100 ">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 ">
+                {{ question.title }}
+            </h3>
+            {% for response in responses %}
+                {{response.text}}
+            {% endfor %}
+        
+        </div>
+    {% endfor %}
+</div>
+<form  method="POST">
+    {% csrf_token %}
+    {{form|crispy}}
+</form>
+{% endblock content %}
